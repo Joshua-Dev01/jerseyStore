@@ -36,27 +36,29 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const totalItems = useCartStore((state) => state.totalItems());
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const totalItems = useCartStore((state) => state.totalItems());
+  const syncFromDB = useCartStore((state) => state.syncFromDB);
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      if (data.user) syncFromDB();
+    });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) syncFromDB();
     });
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -75,20 +77,13 @@ export default function Navbar() {
   }
 
   const userInitial = user?.email?.charAt(0).toUpperCase();
-  const textColor = scrolled ? "text-gray-900" : "text-white";
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white border-b border-gray-200 shadow-sm py-3"
-          : "bg-transparent py-5"
-      }`}
-    >
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 shadow-sm py-3">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link
           href="/"
-          className={`text-lg font-black tracking-widest uppercase transition-colors duration-500 ${textColor}`}
+          className="text-lg font-black tracking-widest uppercase text-gray-900"
         >
           Mekus Standard
         </Link>
@@ -96,7 +91,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <Link
             href="/products"
-            className={`text-xs tracking-widest uppercase transition-colors duration-500 hover:opacity-60 ${textColor}`}
+            className="text-xs tracking-widest uppercase text-gray-900 hover:opacity-60 transition-opacity"
           >
             Shop
           </Link>
@@ -108,9 +103,7 @@ export default function Navbar() {
               onMouseEnter={() => openDropdown(nav.label)}
               onMouseLeave={scheduleClose}
             >
-              <button
-                className={`text-xs tracking-widest uppercase transition-colors duration-500 hover:opacity-60 flex items-center gap-1 py-3 ${textColor}`}
-              >
+              <button className="text-xs tracking-widest uppercase text-gray-900 hover:opacity-60 transition-opacity flex items-center gap-1 py-3">
                 {nav.label}
                 <span
                   className={`text-xs transition-transform duration-300 ${activeDropdown === nav.label ? "rotate-180" : ""}`}
@@ -142,13 +135,13 @@ export default function Navbar() {
 
           <Link
             href="/new-arrivals"
-            className={`text-xs tracking-widest uppercase transition-colors duration-500 hover:opacity-60 ${textColor}`}
+            className="text-xs tracking-widest uppercase text-gray-900 hover:opacity-60 transition-opacity"
           >
             New Arrivals
           </Link>
           <Link
             href="/sale"
-            className={`text-xs tracking-widest uppercase transition-colors duration-500 hover:opacity-60 ${textColor}`}
+            className="text-xs tracking-widest uppercase text-gray-900 hover:opacity-60 transition-opacity"
           >
             Sale
           </Link>
@@ -172,7 +165,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => setSearchOpen(true)}
-              className={`transition-colors duration-500 hover:opacity-60 ${textColor}`}
+              className="text-gray-900 hover:opacity-60 transition-opacity"
             >
               <Search size={18} />
             </button>
@@ -180,14 +173,14 @@ export default function Navbar() {
 
           <Link
             href="/wishlist"
-            className={`transition-colors duration-500 hover:opacity-60 ${textColor}`}
+            className="text-gray-900 hover:opacity-60 transition-opacity"
           >
             <Heart size={18} />
           </Link>
 
           <Link
             href="/cart"
-            className={`relative transition-colors duration-500 hover:opacity-60 ${textColor}`}
+            className="relative text-gray-900 hover:opacity-60 transition-opacity"
           >
             <ShoppingBag size={18} />
             {totalItems > 0 && (
@@ -201,9 +194,7 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold tracking-widest transition-all ${
-                  scrolled ? "bg-black text-white" : "bg-white text-black"
-                }`}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold tracking-widest bg-black text-white"
               >
                 {userInitial}
               </button>
@@ -257,14 +248,14 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className={`text-xs tracking-widest uppercase transition-colors duration-500 hover:opacity-60 ${textColor}`}
+              className="text-xs tracking-widest uppercase text-gray-900 hover:opacity-60 transition-opacity"
             >
               Login
             </Link>
           )}
 
           <button
-            className={`md:hidden transition-colors duration-500 ${textColor}`}
+            className="md:hidden text-gray-900"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -273,26 +264,18 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div
-          className={`md:hidden px-6 pt-4 pb-6 flex flex-col gap-4 border-t mt-3 ${
-            scrolled
-              ? "bg-white border-gray-200"
-              : "bg-black/90 border-white/10"
-          }`}
-        >
+        <div className="md:hidden px-6 pt-4 pb-6 flex flex-col gap-4 border-t mt-3 bg-white border-gray-200">
           <Link
             href="/products"
             onClick={() => setMenuOpen(false)}
-            className={`text-xs tracking-widest uppercase ${scrolled ? "text-gray-900" : "text-white"}`}
+            className="text-xs tracking-widest uppercase text-gray-900"
           >
             Shop
           </Link>
 
           {navDropdowns.map((nav) => (
             <div key={nav.label}>
-              <p
-                className={`text-xs tracking-widest uppercase font-bold mb-2 ${scrolled ? "text-gray-400" : "text-white/40"}`}
-              >
+              <p className="text-xs tracking-widest uppercase font-bold mb-2 text-gray-400">
                 {nav.label}
               </p>
               {nav.items.map(({ label, href }) => (
@@ -300,7 +283,7 @@ export default function Navbar() {
                   key={label}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className={`block text-xs tracking-widest uppercase pl-3 py-1.5 ${scrolled ? "text-gray-700" : "text-white"}`}
+                  className="block text-xs tracking-widest uppercase pl-3 py-1.5 text-gray-700"
                 >
                   {label}
                 </Link>
@@ -308,33 +291,29 @@ export default function Navbar() {
             </div>
           ))}
 
-          <div
-            className={`border-t pt-4 flex flex-col gap-3 ${scrolled ? "border-gray-200" : "border-white/10"}`}
-          >
+          <div className="border-t pt-4 flex flex-col gap-3 border-gray-200">
             <Link
               href="/new-arrivals"
               onClick={() => setMenuOpen(false)}
-              className={`text-xs tracking-widest uppercase ${scrolled ? "text-gray-900" : "text-white"}`}
+              className="text-xs tracking-widest uppercase text-gray-900"
             >
               New Arrivals
             </Link>
             <Link
               href="/sale"
               onClick={() => setMenuOpen(false)}
-              className={`text-xs tracking-widest uppercase ${scrolled ? "text-gray-900" : "text-white"}`}
+              className="text-xs tracking-widest uppercase text-gray-900"
             >
               Sale
             </Link>
           </div>
 
-          <div
-            className={`border-t pt-4 ${scrolled ? "border-gray-200" : "border-white/10"}`}
-          >
+          <div className="border-t pt-4 border-gray-200">
             {user ? (
               <form action={signOut}>
                 <button
                   type="submit"
-                  className={`text-xs tracking-widest uppercase ${scrolled ? "text-red-500" : "text-red-400"}`}
+                  className="text-xs tracking-widest uppercase text-red-500"
                 >
                   Sign Out
                 </button>
@@ -344,14 +323,14 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-xs tracking-widest uppercase ${scrolled ? "text-gray-900" : "text-white"}`}
+                  className="text-xs tracking-widest uppercase text-gray-900"
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-xs tracking-widest uppercase ${scrolled ? "text-gray-900" : "text-white"}`}
+                  className="text-xs tracking-widest uppercase text-gray-900"
                 >
                   Sign Up
                 </Link>

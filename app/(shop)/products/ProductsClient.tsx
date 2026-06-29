@@ -3,8 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 type Product = {
   id: string;
@@ -20,23 +23,38 @@ type Product = {
   images: string[];
   is_new: boolean;
   in_stock: boolean;
+  status?: string
 };
 
 const PAGE_SIZE = 8;
 
 function ProductCard({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
+  const router = useRouter();
 
-  function handleQuickAdd(e: React.MouseEvent) {
+  async function handleQuickAdd(e: React.MouseEvent) {
     e.preventDefault();
+
+    const supabase = createClient();
+    const { data } = await supabase.auth.getUser();
+
+    if (!data.user) {
+      toast.error("Please log in to add items to your cart");
+      router.push(`/login?redirectTo=/products/${product.slug}`);
+      return;
+    }
+
     addItem({
       id: product.id,
       slug: product.slug,
       name: product.name,
       price: product.price,
-      image: image,
-      size: "M", // default size for quick add
+      image: product.images?.[0] ?? "",
+      size: product.sizes?.[0] ?? "One Size",
+      kitType: product.kit_type,
     });
+
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -51,7 +69,6 @@ function ProductCard({ product }: { product: Product }) {
 
   const hasDiscount =
     product.compare_at_price && product.compare_at_price > product.price;
-  const addItem = useCartStore((state) => state.addItem);
 
   return (
     <Link href={`/products/${product.slug}`} className="group cursor-pointer">
@@ -62,25 +79,41 @@ function ProductCard({ product }: { product: Product }) {
           fill
           className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
         />
-        {product.is_new && (
+        {product.is_new && product.status === "available" && (
           <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs px-2 py-1 tracking-widest uppercase">
             New
           </span>
         )}
-        {!product.in_stock && (
+        {product.status === "sold_out" && (
           <span className="absolute top-3 right-3 bg-gray-400 text-white text-xs px-2 py-1 tracking-widest uppercase">
             Sold Out
           </span>
         )}
+        {product.status === "coming_soon" && (
+          <span className="absolute top-3 right-3 bg-amber-500 text-white text-xs px-2 py-1 tracking-widest uppercase">
+            Coming Soon
+          </span>
+        )}
         <button
           onClick={handleQuickAdd}
-          className={`absolute bottom-0 left-0 right-0 py-3 text-xs tracking-widest uppercase font-medium transition-all duration-300 translate-y-full group-hover:translate-y-0 ${
+          disabled={
+            product.status === "sold_out" || product.status === "coming_soon"
+          }
+          className={`absolute bottom-0 left-0 cursor-pointer right-0 py-3 text-xs tracking-widest uppercase font-medium transition-all duration-300 translate-y-full group-hover:translate-y-0 disabled:cursor-not-allowed ${
             added
               ? "bg-green-600 text-white"
-              : "bg-white text-black hover:bg-black hover:text-white"
+              : product.status === "sold_out" ||
+                  product.status === "coming_soon"
+                ? "bg-gray-300 text-gray-500"
+                : "bg-white text-black hover:bg-black hover:text-white"
           }`}
         >
-          {added ? "✓ Added" : "Quick Add"}
+          {added && "✓ Added"}
+          {!added && product.status === "sold_out" && "Sold Out"}
+          {!added && product.status === "coming_soon" && "Coming Soon"}
+          {!added &&
+            (!product.status || product.status === "available") &&
+            "Quick Add"}
         </button>
       </div>
 
@@ -188,7 +221,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setFilterOpen(!filterOpen)}
-            className="flex items-center gap-2 cursor-pointer text-xs uppercase tracking-widest text-white bg-blue-950 rounded-sm transition-colors border border-gray-200 px-3 py-2"
+            className="flex items-center gap-2 text-xs uppercase tracking-widest text-gray-700 hover:text-black transition-colors border border-gray-200 px-3 py-2"
           >
             <SlidersHorizontal size={14} />
             Filter
@@ -300,7 +333,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
             {activeFilterCount > 0 && (
               <button
                 onClick={clearFilters}
-                className="mt-6 flex items-center cursor-pointer gap-1 text-xs text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors"
+                className="mt-6 flex items-center gap-1 text-xs text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors"
               >
                 <X size={12} />
                 Clear All Filters
@@ -324,7 +357,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
           </p>
           <button
             onClick={clearFilters}
-            className="text-xs text-blue-600 cursor-pointer underline mt-3 inline-block"
+            className="text-xs text-blue-600 underline mt-3 inline-block"
           >
             Clear filters
           </button>
@@ -350,7 +383,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
           {hasMore && (
             <button
               onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-              className="px-12 py-4 bg-black cursor-pointer text-white text-xs uppercase tracking-widest hover:bg-gray-800 transition-all duration-300"
+              className="px-12 py-4 bg-black text-white text-xs uppercase tracking-widest hover:bg-gray-800 transition-all duration-300"
             >
               Load More
             </button>

@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { Heart } from 'lucide-react'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/cartStore'
+import { createClient } from '@/lib/supabase/client'
 
 type Product = {
   id: string
@@ -21,8 +23,18 @@ export default function AddToCart({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState('')
   const [wishlisted, setWishlisted] = useState(false)
   const addItem = useCartStore((state) => state.addItem)
+  const router = useRouter()
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
+    const supabase = createClient()
+    const { data } = await supabase.auth.getUser()
+
+    if (!data.user) {
+      toast.error('Please log in to add items to your cart')
+      router.push(`/login?redirectTo=/products/${product.slug}`)
+      return
+    }
+
     if (product.sizes?.length > 0 && !selectedSize) {
       toast.error('Please select a size')
       return
@@ -39,6 +51,20 @@ export default function AddToCart({ product }: { product: Product }) {
     })
 
     toast.success(`${product.name} added to cart!`)
+  }
+
+  async function handleWishlist() {
+    const supabase = createClient()
+    const { data } = await supabase.auth.getUser()
+
+    if (!data.user) {
+      toast.error('Please log in to use wishlist')
+      router.push(`/login?redirectTo=/products/${product.slug}`)
+      return
+    }
+
+    setWishlisted(!wishlisted)
+    toast.success(wishlisted ? 'Removed from wishlist' : 'Added to wishlist!')
   }
 
   return (
@@ -78,10 +104,7 @@ export default function AddToCart({ product }: { product: Product }) {
           {product.in_stock ? 'Add to Cart' : 'Sold Out'}
         </button>
         <button
-          onClick={() => {
-            setWishlisted(!wishlisted)
-            toast.success(wishlisted ? 'Removed from wishlist' : 'Added to wishlist!')
-          }}
+          onClick={handleWishlist}
           className={`w-14 h-14 border flex items-center justify-center transition-all ${
             wishlisted
               ? 'border-black bg-black text-white'
