@@ -29,6 +29,32 @@ export async function signIn(formData: FormData) {
   redirect(redirectTo || '/')
 }
 
+export async function adminSignIn(formData: FormData) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+  })
+
+  if (error) return { error: error.message }
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user!.id)
+    .single()
+
+  if (!profile?.is_admin) {
+    await supabase.auth.signOut()
+    return { error: 'This account does not have admin access' }
+  }
+
+  redirect('/admin')
+}
+
 export async function signInWithGoogle(redirectTo: string = '/') {
   const supabase = await createClient()
 
