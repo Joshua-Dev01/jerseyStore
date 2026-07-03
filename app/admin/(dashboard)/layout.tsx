@@ -1,167 +1,17 @@
-'use client'
+import { requireAdmin } from "@/lib/admin/admin";
+import AdminSidebar from "./siderbar/AdminSidebar";
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { signOut } from '@/actions/auth'
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingBag,
-  Users,
-  BarChart3,
-  Settings,
-  LogOut,
-  User,
-  Menu,
-  X,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
-
-const navItems = [
-  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { label: 'Products', href: '/admin/products', icon: Package },
-  { label: 'Orders', href: '/admin/orders', icon: ShoppingBag },
-  { label: 'Customers', href: '/admin/customers', icon: Users },
-  { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-  { label: 'Settings', href: '/admin/settings', icon: Settings },
-]
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  // Replace this with your user
-  const user = { email: 'admin@example.com' }
-
-  const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const user = await requireAdmin();
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-
-      {/* Mobile Menu */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 bg-white border rounded-md p-2 shadow"
-      >
-        <Menu size={20} />
-      </button>
-
-      {/* Overlay */}
-      {mobileOpen && (
-        <div
-          onClick={() => setMobileOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-0 left-0 h-screen bg-white border-r border-gray-200 flex flex-col
-          transition-all duration-300 z-50
-          ${collapsed ? 'w-20' : 'w-56'}
-          ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0
-        `}
-      >
-        {/* Close Button Mobile */}
-        <button
-          onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 lg:hidden"
-        >
-          <X size={20} />
-        </button>
-
-        {/* Brand */}
-        <div className="p-5 border-b border-gray-100">
-          {!collapsed && (
-            <>
-              <p className="text-sm font-bold text-gray-900">
-                Admin Panel
-              </p>
-              <p className="text-xs text-gray-400">
-                Jersey Store Manager
-              </p>
-            </>
-          )}
-        </div>
-
-        {/* Nav */}
-        <nav className="flex-1 p-3 space-y-0.5">
-          {navItems.map(({ label, href, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
-            >
-              <Icon size={17} />
-              {!collapsed && label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Bottom */}
-        <div className="p-4 border-t border-gray-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <User size={14} className="text-gray-600" />
-            </div>
-
-            {!collapsed && (
-              <div>
-                <p className="text-xs font-bold text-gray-900">
-                  Admin User
-                </p>
-                <p className="text-xs text-gray-400 truncate">
-                  {user.email}
-                </p>
-              </div>
-            )}
-          </div>
-
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="flex items-center gap-2 text-xs text-gray-500 hover:text-red-500 transition-colors w-full"
-            >
-              <LogOut size={14} />
-              {!collapsed && 'Logout'}
-            </button>
-          </form>
-        </div>
-      </aside>
-
-      {/* Collapse Button */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className={`
-          hidden lg:flex fixed top-1/2 -translate-y-1/2
-          z-[60] bg-white border shadow rounded-r-md
-          w-8 h-14 items-center justify-center
-          transition-all duration-300
-          ${collapsed ? 'left-20' : 'left-56'}
-        `}
-      >
-        {collapsed ? (
-          <ChevronRight size={18} />
-        ) : (
-          <ChevronLeft size={18} />
-        )}
-      </button>
-
-      {/* Main */}
-      <main
-        className={`
-          flex-1 min-h-screen transition-all duration-300
-          ${collapsed ? 'lg:ml-20' : 'lg:ml-56'}
-        `}
-      >
-        {children}
-      </main>
-
+      <AdminSidebar email={user.email ?? "Admin"} />
+      <main className="flex-1 min-h-screen min-w-0">{children}</main>
     </div>
-  )
+  );
 }
