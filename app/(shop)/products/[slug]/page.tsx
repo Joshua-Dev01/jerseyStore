@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import ProductDetailClient from '../ProductDetailClient'
+import { formatNaira } from '@/lib/utils'
 
 export default async function ProductPage({
   params,
@@ -64,7 +65,7 @@ export default async function ProductPage({
                     <p className="text-xs text-gray-700 group-hover:text-gray-400 transition-colors truncate">
                       {title || item.name}
                     </p>
-                    <p className="text-xs text-blue-600 font-medium">${item.price.toFixed(2)}</p>
+                    <p className="text-xs text-blue-600 font-medium">{formatNaira(item.price)}</p>
                   </Link>
                 )
               })}

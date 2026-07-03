@@ -32,16 +32,16 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-950 px-4">
+    <div className="min-h-screen flex items-center bg-neutral-100 justify-center px-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-t-xl shadow-2xl p-10 pb-8">
           {/* Brand */}
-          <div className="text-center mb-6">
+          {/* <div className="text-center mb-6">
             <h1 className="text-2xl font-black tracking-tight uppercase text-gray-900">
               Jersey Store
             </h1>
             <div className="w-10 h-0.75 bg-blue-700 mx-auto mt-3" />
-          </div>
+          </div> */}
 
           {/* Heading */}
           <div className="text-center mb-8">
@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 bg-blue-700 text-white py-3.5 rounded-md text-sm font-bold tracking-widest uppercase hover:bg-blue-800 transition-colors disabled:opacity-50 mt-1"
+              className="flex items-center justify-center cursor-pointer gap-2 bg-blue-700 text-white py-3.5 rounded-md text-sm font-bold tracking-widest uppercase hover:bg-blue-800 transition-colors disabled:opacity-50 mt-1"
             >
               {loading ? "Signing in..." : "Login to Dashboard"}
               {!loading && <ArrowRight size={16} />}
@@ -119,7 +119,7 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Gradient accent bar */}
-        <div className="h-1.5 rounded-b-xl bg-linear-to-r from-blue-800 via-blue-400 to-blue-800" />
+        <div className="h-1.5 rounded-b-xl bg-linear-to-r from-blue-950 via-blue-400 to-blue-800" />
 
         {/* Footer */}
         <div className="text-center mt-8 text-gray-500">

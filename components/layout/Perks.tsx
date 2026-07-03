@@ -1,6 +1,6 @@
 export default function Perks() {
   const perks = [
-    { title: 'Free Shipping', sub: 'On orders over $50' },
+    { title: 'Free Shipping', sub: 'On orders over ₦50,000' },
     { title: '30-Day Returns', sub: 'No questions asked' },
     { title: 'Premium Quality', sub: 'Crafted to last' },
     { title: 'Secure Payment', sub: '100% protected' },

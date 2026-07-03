@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import { createClient } from "@/lib/supabase/client";
+import { formatNaira } from "@/lib/utils";
 
 type Product = {
   id: string;
@@ -136,11 +137,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
         <div className="flex items-center gap-3 mb-1">
           <p className="text-2xl font-bold text-blue-600">
-            ${product.price.toFixed(2)}
+            {formatNaira(product.price)}
           </p>
           {hasDiscount && (
             <p className="text-sm text-gray-400 line-through">
-              ${product.compare_at_price!.toFixed(2)}
+              {formatNaira(product.compare_at_price!)}
             </p>
           )}
         </div>
@@ -266,7 +267,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                   {key === "sizing" &&
                     "This jersey follows standard athletic sizing. If between sizes, we recommend sizing up for a more comfortable fit."}
                   {key === "delivery" &&
-                    "Free standard shipping on orders over $50 (5-7 business days). Express shipping available at checkout. 30-day returns on unworn items with tags attached."}
+                    "Free standard shipping on orders over ₦50,000 (5-7 business days). Express shipping available at checkout. 30-day returns on unworn items with tags attached."}
                   {key === "authenticity" &&
                     "This product is sourced through official channels and verified for authenticity before listing."}
                 </div>

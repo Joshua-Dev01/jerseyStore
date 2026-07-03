@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { formatNaira } from "@/lib/utils";
 
 type Product = {
   id: string;
@@ -70,11 +71,11 @@ function ProductCard({ product }: { product: Product }) {
       </h3>
       <div className="flex items-center gap-2">
         <p className="text-sm text-blue-600 font-medium">
-          ${product.price.toFixed(2)}
+          {formatNaira(product.price)}
         </p>
         {hasDiscount && (
           <p className="text-xs text-gray-400 line-through">
-            ${product.compare_at_price!.toFixed(2)}
+            {formatNaira(product.compare_at_price!)}
           </p>
         )}
       </div>

@@ -116,7 +116,7 @@ export default function AddToCart({ product }: { product: Product }) {
       </div>
 
       <p className="text-xs text-gray-400 tracking-wide">
-        ✓ Free shipping on orders over $50 &nbsp;·&nbsp; ✓ 30-day returns
+        ✓ Free shipping on orders over ₦50,000 &nbsp;·&nbsp; ✓ 30-day returns
       </p>
 
     </div>

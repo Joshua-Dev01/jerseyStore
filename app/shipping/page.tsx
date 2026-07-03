@@ -10,7 +10,7 @@ export default function ShippingPage() {
           <h3 className="text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">
             Standard Shipping
           </h3>
-          <p>Free on all orders over $50. Delivery takes 5-7 business days. Orders under $50 incur a flat $4.99 shipping fee.</p>
+          <p>Free on all orders over ₦50,000. Delivery takes 5-7 business days. Orders under ₦50,000 incur a flat ₦2,000 shipping fee.</p>
         </div>
 
         <div>

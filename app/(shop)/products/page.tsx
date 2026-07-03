@@ -42,6 +42,12 @@ export default async function ProductsPage({
 
   const { data: products, error } = await query;
 
+  console.log("PRODUCTS RESULT:", {
+    count: products?.length,
+    error,
+    sample: products?.[0],
+  });
+
   if (error) console.error(error);
 
   return (

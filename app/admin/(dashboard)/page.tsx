@@ -92,7 +92,7 @@ export default async function AdminDashboard() {
             icon: DollarSign,
             change: "+12%",
             positive: true,
-            color: "text-blue-600",
+            color: "text-green-900",
           },
           {
             label: "Total Orders",
@@ -147,7 +147,7 @@ export default async function AdminDashboard() {
               {[40, 65, 45, 70, 55, 80, 60].map((h, i) => (
                 <div
                   key={i}
-                  className={`flex-1 rounded-sm ${positive ? "bg-blue-200" : "bg-red-200"}`}
+                  className={`flex-1 rounded-sm ${positive ? "bg-green-600" : "bg-red-600"}`}
                   style={{ height: `${h}%` }}
                 />
               ))}

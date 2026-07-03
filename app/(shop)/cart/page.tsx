@@ -38,7 +38,7 @@ export default function CartPage() {
   }
 
   const subtotal = totalPrice();
-  const shipping = subtotal > 50 ? 0 : 4.99;
+  const shipping = subtotal > 50000 ? 0 : 2000;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
@@ -74,7 +74,7 @@ export default function CartPage() {
                     {item.name}
                   </h3>
                   <p className="text-sm font-bold text-blue-600 whitespace-nowrap">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatNaira(item.price * item.quantity)}
                   </p>
                 </div>
 
@@ -136,19 +136,19 @@ export default function CartPage() {
             <div className="flex justify-between text-gray-500 uppercase text-xs tracking-wide">
               <span>Subtotal</span>
               <span className="text-gray-900 font-medium">
-                ${subtotal.toFixed(2)}
+                {formatNaira(subtotal)}
               </span>
             </div>
             <div className="flex justify-between text-gray-500 uppercase text-xs tracking-wide">
               <span>Shipping</span>
               <span className="text-blue-600 font-medium">
-                {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                {shipping === 0 ? "Free" : formatNaira(shipping)}
               </span>
             </div>
             <div className="flex justify-between text-gray-500 uppercase text-xs tracking-wide">
               <span>Estimated Tax</span>
               <span className="text-gray-900 font-medium">
-                ${tax.toFixed(2)}
+                {formatNaira(tax)}
               </span>
             </div>
           </div>
