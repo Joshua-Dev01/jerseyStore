@@ -14,6 +14,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Pencil,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { formatNaira } from "@/lib/utils";
 import { deleteProducts } from "./Productsaction";
@@ -69,6 +71,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [deleting, setDeleting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string[] | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -111,17 +114,20 @@ export default function ProductsTable({ products }: { products: Product[] }) {
     setSelected(next);
   }
 
-  async function handleDelete(ids: string[]) {
+  function handleDelete(ids: string[]) {
     if (ids.length === 0) return;
-    const confirmed = window.confirm(
-      `Delete ${ids.length} product${ids.length > 1 ? "s" : ""}? This can't be undone.`,
-    );
-    if (!confirmed) return;
+    setDeleteTarget(ids);
+  }
+
+  async function confirmDelete() {
+    const ids = deleteTarget;
+    if (!ids || ids.length === 0) return;
 
     setDeleting(true);
     const result = await deleteProducts(ids);
     setDeleting(false);
     setOpenMenu(null);
+    setDeleteTarget(null);
 
     if (result?.error) {
       toast.error(result.error);
@@ -191,7 +197,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
           </p>
         </div>
         <Link
-          href="/admin/products/new"
+          href="/admin/products/Newproduct"
           className="flex items-center justify-center gap-2 bg-blue-700 text-white px-4 py-2.5 rounded-md text-sm font-semibold hover:bg-blue-800 transition-colors shrink-0"
         >
           <Plus size={16} />
@@ -238,17 +244,35 @@ export default function ProductsTable({ products }: { products: Product[] }) {
           <div className="relative">
             <button
               onClick={() => setFilterOpen((v) => !v)}
-              className="flex items-center justify-center border border-gray-200 bg-white w-10 h-10 rounded-md text-gray-600 hover:bg-gray-50 transition-colors"
+              className="relative flex items-center justify-center border border-gray-200 bg-white w-10 h-10 rounded-md text-gray-600 hover:bg-gray-50 transition-colors"
               aria-label="Filter"
             >
               <SlidersHorizontal size={15} />
+              {statusFilter.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 rounded-full bg-blue-700 text-white text-[10px] font-bold">
+                  {statusFilter.length}
+                </span>
+              )}
             </button>
 
             {filterOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg p-3 z-20">
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
-                  Status
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    Status
+                  </p>
+                  {statusFilter.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setStatusFilter([]);
+                        setPage(1);
+                      }}
+                      className="text-xs font-medium text-blue-700 hover:underline"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
                 <div className="flex flex-col gap-2">
                   {["available", "sold_out", "coming_soon"].map((status) => (
                     <label
@@ -270,6 +294,27 @@ export default function ProductsTable({ products }: { products: Product[] }) {
           </div>
         </div>
       </div>
+
+      {statusFilter.length > 0 && (
+        <div className="flex items-center gap-2 mb-4 -mt-2">
+          <span className="text-xs text-gray-400">Filtering by:</span>
+          {statusFilter.map((status) => (
+            <span
+              key={status}
+              className="flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full"
+            >
+              {statusLabel(status)}
+              <button
+                onClick={() => toggleStatusFilter(status)}
+                aria-label={`Remove ${statusLabel(status)} filter`}
+                className="hover:text-blue-900"
+              >
+                <X size={12} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -488,6 +533,56 @@ export default function ProductsTable({ products }: { products: Product[] }) {
           </div>
         </div>
       </div>
+
+      {/* Delete confirmation modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => !deleting && setDeleteTarget(null)}
+          />
+          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
+            <div className="flex items-start gap-4">
+              <div className="shrink-0 w-11 h-11 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertTriangle size={22} className="text-red-600" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-base font-bold text-gray-900">
+                  Delete {deleteTarget.length > 1
+                    ? `${deleteTarget.length} products`
+                    : "product"}
+                  ?
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  This action can&apos;t be undone. This will permanently
+                  delete{" "}
+                  {deleteTarget.length > 1
+                    ? "these products"
+                    : "this product"}{" "}
+                  from your store.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 mt-6">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="px-4 py-2 rounded-md text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleting}
+                className="px-4 py-2 rounded-md text-sm font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
