@@ -50,7 +50,7 @@ export default function CheckoutPage() {
   })
 
   const subtotal = totalPrice()
-  const shipping = subtotal > 50000 ? 0 : 2000
+  const shipping = subtotal > 50000 ? 0 : 50
   const total = subtotal + shipping
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {

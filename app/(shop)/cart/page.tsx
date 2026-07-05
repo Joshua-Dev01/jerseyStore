@@ -38,7 +38,7 @@ export default function CartPage() {
   }
 
   const subtotal = totalPrice();
-  const shipping = subtotal > 50000 ? 0 : 2000;
+  const shipping = subtotal > 50000 ? 0 : 500;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 

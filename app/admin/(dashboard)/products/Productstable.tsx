@@ -197,8 +197,8 @@ export default function ProductsTable({ products }: { products: Product[] }) {
           </p>
         </div>
         <Link
-          href="/admin/products/Newproduct"
-          className="flex items-center justify-center gap-2 bg-blue-700 text-white px-4 py-2.5 rounded-md text-sm font-semibold hover:bg-blue-800 transition-colors shrink-0"
+          href="/admin/products/new"
+          className="flex items-center justify-center gap-2 bg-blue-950 text-white px-4 py-2.5 rounded-md text-sm font-semibold hover:bg-blue-800 transition-colors shrink-0"
         >
           <Plus size={16} />
           Add Product
