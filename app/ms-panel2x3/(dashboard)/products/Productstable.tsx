@@ -197,7 +197,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
           </p>
         </div>
         <Link
-          href="/admin/products/new"
+          href="/ms-panel2x3/products/new"
           className="flex items-center justify-center gap-2 bg-blue-950 text-white px-4 py-2.5 rounded-md text-sm font-semibold hover:bg-blue-800 transition-colors shrink-0"
         >
           <Plus size={16} />
@@ -439,7 +439,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
                           />
                           <div className="absolute right-4 top-10 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-20 py-1">
                             <Link
-                              href={`/admin/products/${product.id}/edit`}
+                              href={`/ms-panel2x3/products/${product.id}/edit`}
                               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                             >
                               <Pencil size={14} />

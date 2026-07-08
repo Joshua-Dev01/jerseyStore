@@ -74,7 +74,7 @@ export default async function AdminDashboard() {
             Export
           </button>
           <Link
-            href="/admin/products/new"
+            href="/ms-panel2x3/products/new"
             className="flex items-center gap-2 bg-blue-950 text-white px-4 py-2 text-xs uppercase tracking-widest hover:bg-blue-700 transition-colors rounded"
           >
             <Plus size={14} />
@@ -253,7 +253,7 @@ export default async function AdminDashboard() {
           </div>
 
           <Link
-            href="/admin/products"
+            href="/ms-panel2x3/products"
             className="block text-center mt-4 border border-red-500 text-red-500 py-2 text-xs uppercase tracking-widest hover:bg-red-50 transition-colors rounded"
           >
             Restock All Now
@@ -270,7 +270,7 @@ export default async function AdminDashboard() {
               Recent Orders
             </h3>
             <Link
-              href="/admin/orders"
+              href="/ms-panel2x3/orders"
               className="text-xs text-blue-600 hover:underline flex items-center gap-1"
             >
               View All →

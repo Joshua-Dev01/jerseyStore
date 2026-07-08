@@ -10,7 +10,7 @@ import {
   ShoppingBag,
   Users,
   BarChart3,
-  Settings,
+  // Settings,
   LogOut,
   User,
   Menu,
@@ -20,12 +20,12 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { label: "Overview", href: "/admin", icon: LayoutDashboard },
-  { label: "Products", href: "/admin/products", icon: Package },
-  { label: "Orders", href: "/admin/orders", icon: ShoppingBag },
-  { label: "Customers", href: "/admin/customers", icon: Users },
-  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Overview", href: "/ms-panel2x3", icon: LayoutDashboard },
+  { label: "Products", href: "/ms-panel2x3/products", icon: Package },
+  { label: "Orders", href: "/ms-panel2x3/orders", icon: ShoppingBag },
+  { label: "Customers", href: "/ms-panel2x3/customers", icon: Users },
+  { label: "Analytics", href: "/ms-panel2x3/analytics", icon: BarChart3 },
+  // { label: "Settings", href: "/ms-panel2x3/settings", icon: Settings },
 ];
 
 export default function AdminSidebar({ email }: { email: string }) {
