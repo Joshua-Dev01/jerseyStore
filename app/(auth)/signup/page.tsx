@@ -109,7 +109,7 @@ export default function SignUpPage() {
           <hr className="flex-1 border-gray-200" />
         </div>
 
-        <form action={async () => await signInWithGoogle()}>
+        <form action={async () => { await signInWithGoogle(); }}>
           <button
             type="submit"
             className="w-full border border-gray-200 py-3 text-sm flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors"

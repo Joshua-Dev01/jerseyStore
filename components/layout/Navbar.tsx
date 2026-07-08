@@ -139,12 +139,12 @@ export default function Navbar() {
           >
             New Arrivals
           </Link>
-          <Link
+          {/* <Link
             href="/sale"
             className="text-xs tracking-widest uppercase text-gray-900 hover:opacity-60 transition-opacity"
           >
             Sale
-          </Link>
+          </Link> */}
         </div>
 
         <div className="flex items-center gap-5">
@@ -220,20 +220,14 @@ export default function Navbar() {
                   >
                     My Orders
                   </Link>
-                  <Link
+                  {/* <Link
                     href="/wishlist"
                     onClick={() => setDropdownOpen(false)}
                     className="block px-4 py-3 text-xs tracking-widest uppercase text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     Wishlist
-                  </Link>
-                  <Link
-                    href="/admin"
-                    onClick={() => setDropdownOpen(false)}
-                    className="block px-4 py-3 text-xs tracking-widest uppercase text-blue-600 hover:bg-gray-50 transition-colors"
-                  >
-                    Admin Panel
-                  </Link>
+                  </Link> */}
+                
                   <form action={signOut}>
                     <button
                       type="submit"

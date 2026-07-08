@@ -165,7 +165,7 @@ export default function CheckoutPage() {
                   placeholder="Full Name"
                   value={form.fullName}
                   onChange={handleChange}
-                  className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors col-span-2"
+                  className="border border-gray-200 bg-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors col-span-2"
                 />
                 <input
                   name="email"
@@ -173,14 +173,14 @@ export default function CheckoutPage() {
                   placeholder="Email"
                   value={form.email}
                   onChange={handleChange}
-                  className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
+                  className="border border-gray-200 bg-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
                 />
                 <input
                   name="phone"
                   placeholder="Phone Number"
                   value={form.phone}
                   onChange={handleChange}
-                  className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
+                  className="border border-gray-200 px-4 bg-gray-200 py-3 text-sm outline-none focus:border-black transition-colors"
                 />
               </div>
             </div>
@@ -195,21 +195,21 @@ export default function CheckoutPage() {
                   placeholder="Street Address"
                   value={form.address}
                   onChange={handleChange}
-                  className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors col-span-2"
+                  className="border border-gray-200 bg-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors col-span-2"
                 />
                 <input
                   name="city"
                   placeholder="City"
                   value={form.city}
                   onChange={handleChange}
-                  className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
+                  className="border border-gray-200 bg-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
                 />
                 <input
                   name="state"
                   placeholder="State"
                   value={form.state}
                   onChange={handleChange}
-                  className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
+                  className="border border-gray-200 px-4 bg-gray-200 py-3 text-sm outline-none focus:border-black transition-colors"
                 />
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function CheckoutPage() {
             <button
               onClick={handlePayment}
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-4 text-xs uppercase tracking-widest hover:bg-blue-700 transition-colors mt-6 font-bold disabled:opacity-50"
+              className="w-full bg-blue-950 cursor-pointer text-white py-4 text-xs uppercase tracking-widest hover:bg-blue-700 transition-colors mt-6 font-bold disabled:opacity-50"
             >
               {loading ? 'Processing...' : `Pay ₦${total.toLocaleString()} with Paystack`}
             </button>

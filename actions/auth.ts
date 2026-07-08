@@ -74,3 +74,25 @@ export async function signOut() {
   await supabase.auth.signOut()
   redirect('/')
 }
+
+export async function requestPasswordReset(formData: FormData) {
+  const supabase = await createClient()
+  const email = formData.get('email') as string
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent('/update-password')}`,
+  })
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
+export async function updatePassword(formData: FormData) {
+  const supabase = await createClient()
+  const password = formData.get('password') as string
+
+  const { error } = await supabase.auth.updateUser({ password })
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
